@@ -1,0 +1,8 @@
+{
+  "appId": "com.omok.app",
+  "appName": "오목",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

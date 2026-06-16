@@ -1,0 +1,307 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #fff8e1;
+}
+
+.screen-header,
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  min-height: 44px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #d7ccc8;
+}
+
+.screen-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  min-height: 0;
+}
+
+.screen-main.compact {
+  justify-content: flex-start;
+  padding-top: 12px;
+}
+
+.home-main {
+  gap: 16px;
+}
+
+.nickname {
+  font-weight: bold;
+  color: #4e342e;
+}
+
+.rank {
+  color: #6d4c41;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: #5d4037;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.icon-btn-sm {
+  background: none;
+  border: 1px solid #a1887f;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  color: #5d4037;
+  font-size: 0.85rem;
+}
+
+.menu-btn {
+  width: 100%;
+  max-width: 280px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 2px solid #a1887f;
+  background: #fff;
+  color: #4e342e;
+  font-size: 1.05rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-btn small {
+  font-size: 0.75rem;
+  color: #8d6e63;
+}
+
+.menu-btn.primary {
+  background: #5d4037;
+  border-color: #4e342e;
+  color: #fff;
+}
+
+.menu-btn.primary small {
+  color: #d7ccc8;
+}
+
+.menu-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.menu-row .menu-btn {
+  flex: 1;
+}
+
+.help-link {
+  background: none;
+  border: none;
+  color: #8d6e63;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.field {
+  width: 100%;
+  max-width: 280px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  color: #6d4c41;
+  margin-bottom: 6px;
+}
+
+.text-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #a1887f;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+.code-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: #efebe9;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.code-box strong {
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+  color: #4e342e;
+}
+
+.status-line,
+.hint {
+  font-size: 0.8rem;
+  color: #8d6e63;
+  text-align: center;
+  margin: 0;
+}
+
+.hint.warn {
+  color: #e65100;
+}
+
+.color-picker {
+  display: flex;
+  gap: 8px;
+}
+
+.color-picker button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #a1887f;
+  background: #fff8e1;
+  cursor: pointer;
+}
+
+.color-picker button.active {
+  background: #ff8f00;
+  border-color: #e65100;
+  color: #fff;
+}
+
+.game-screen {
+  justify-content: flex-start;
+}
+
+.players {
+  font-size: 0.85rem;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.vs {
+  color: #a1887f;
+}
+
+.game-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #6d4c41;
+}
+
+.game-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.game-header {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.result-main {
+  text-align: center;
+}
+
+.result-title {
+  font-size: 2rem;
+  color: #4e342e;
+  margin: 0;
+}
+
+.result-detail {
+  color: #8d6e63;
+  margin: 0 0 16px;
+}
+
+.replay-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px;
+  flex-shrink: 0;
+}
+
+.replay-controls button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #5d4037;
+  background: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.records-screen .record-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+}
+
+.record-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 8px;
+  padding: 12px;
+  border: none;
+  border-bottom: 1px solid #d7ccc8;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.record-date {
+  color: #8d6e63;
+  font-size: 0.8rem;
+}
+
+.record-result {
+  font-weight: bold;
+  color: #5d4037;
+}
+
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: #8d6e63;
+}
+
+.game-id {
+  display: block;
+  font-size: 0.7rem;
+  word-break: break-all;
+  background: #efebe9;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.result-mini {
+  font-size: 0.8rem;
+  color: #5d4037;
+}

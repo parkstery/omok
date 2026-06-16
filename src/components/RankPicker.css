@@ -1,0 +1,58 @@
+.rank-picker {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 0;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.rank-picker::-webkit-scrollbar {
+  display: none;
+}
+
+.rank-chip {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 2px solid #a1887f;
+  background: #fff8e1;
+  color: #4e342e;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.rank-chip.active {
+  background: #5d4037;
+  color: #fff;
+  border-color: #5d4037;
+}
+
+.rule-toggle {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.rule-toggle button {
+  flex: 1;
+  max-width: 120px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #a1887f;
+  background: #fff8e1;
+  color: #4e342e;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.rule-toggle button.active {
+  background: #ff8f00;
+  border-color: #e65100;
+  color: #fff;
+}
+
+.rule-toggle button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
