@@ -8,7 +8,7 @@ import {
   resolveRule,
 } from '../core/game'
 import type { Color, GameConfig, GameRecord, GameState, Move, Rule, Screen } from '../core/types'
-import { findEngineMove } from '../engine/computer'
+import { findEngineMoveAsync } from '../engine/computer'
 import { saveGameRecord } from '../services/replay'
 import { showInterstitialAd } from '../services/ads'
 
@@ -32,6 +32,7 @@ interface GameStore {
   initComputer: (type: 'engine' | 'ai', rank: string, rule: Rule, color: Color | 'random') => void
   makeMove: (x: number, y: number) => void
   runComputerTurn: () => void
+  thinking: boolean
   resign: () => void
   resetGame: () => void
   goHome: () => void
@@ -67,6 +68,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   pendingRank: '15급',
   pendingRule: 'freestyle',
   pendingColor: 1,
+  thinking: false,
 
   setScreen: (screen) => set({ screen }),
 
@@ -140,18 +142,26 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   runComputerTurn: () => {
     const { config, state, humanColor } = get()
-    if (state.result || config.opponentType === 'human') return
+    if (state.result || config.opponentType === 'human' || get().thinking) return
 
     const aiColor = opponentColor(humanColor)
     if (state.turn !== aiColor) return
 
     const rank = humanColor === 1 ? config.whiteRank : config.blackRank
-    const move = findEngineMove(state, config.rule, rank, aiColor, config.opponentType as 'engine' | 'ai')
-    if (!move) return
+    set({ thinking: true })
 
-    const next = applyMove(state, move.x, move.y, state.turn, config.rule, config.boardSize)
-    set({ state: next })
-    if (next.result) void get().finishAndSave()
+    void findEngineMoveAsync(state, config.rule, rank, aiColor, config.opponentType as 'engine' | 'ai')
+      .then((move) => {
+        const latest = get()
+        if (!move || latest.state.result || latest.state.turn !== aiColor) {
+          set({ thinking: false })
+          return
+        }
+        const next = applyMove(latest.state, move.x, move.y, latest.state.turn, latest.config.rule, latest.config.boardSize)
+        set({ state: next, thinking: false })
+        if (next.result) void get().finishAndSave()
+      })
+      .catch(() => set({ thinking: false }))
   },
 
   resign: () => {

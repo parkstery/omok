@@ -13,6 +13,7 @@
     "cap:open": "npx cap open android"
   },
   "dependencies": {
+    "@algorithm.ts/gomoku": "^4.0.5",
     "@capacitor/android": "^8.4.0",
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0",

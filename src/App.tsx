@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { initRapfiEngine } from './engine/rapfi/rapfiClient'
 import { useGameStore } from './store/gameStore'
 import { useUserStore } from './store/userStore'
 import { HomeScreen } from './screens/HomeScreen'
@@ -20,6 +21,10 @@ export function AppRouter() {
   const ready = useUserStore((s) => s.ready)
 
   useEffect(() => {
+    void initRapfiEngine()
+  }, [])
+
+  useEffect(() => {
     void init().then(() => setScreen('home'))
   }, [init, setScreen])
 
@@ -27,7 +32,7 @@ export function AppRouter() {
     return (
       <div className="splash">
         <h1>오목</h1>
-        <p>로딩 중...</p>
+        <p>{ready ? '준비됨' : '엔진 로딩 중…'}</p>
       </div>
     )
   }

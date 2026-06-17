@@ -5,7 +5,7 @@ Android용 오목 앱 — React + Vite + Capacitor + Firebase
 ## 기능
 
 - 사람 대전 (로컬 2인 / 온라인 방 코드)
-- 컴퓨터 대전 (JS 엔진 / AI)
+- 컴퓨터 대전 (Rapfi WASM / 폴백 JS 엔진)
 - 급·단 난이도 (15급 ~ 9단)
 - 일반룰 / 렌주룰 (3급 이상 렌주 강제)
 - 기보 저장 · 리플레이
@@ -22,6 +22,13 @@ npm run test       # 단위 테스트
 npm run cap:sync   # Android 동기화
 npm run cap:open   # Android Studio 열기
 ```
+
+## AI 엔진
+
+- **1순위: Rapfi WASM** (Gomocup급, 렌주 지원) — `public/rapfi/`
+- **폴백: @algorithm.ts/gomoku** — Rapfi 로드 실패 시
+
+앱 시작 시 Rapfi를 백그라운드 로드합니다. 첫 대국 전 잠시 `생각 중…`이 표시될 수 있습니다.
 
 ## Firebase 설정
 

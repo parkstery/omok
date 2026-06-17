@@ -11,10 +11,15 @@ export function GameScreen() {
   const makeMove = useGameStore((s) => s.makeMove)
   const resign = useGameStore((s) => s.resign)
   const goHome = useGameStore((s) => s.goHome)
+  const thinking = useGameStore((s) => s.thinking)
   const [help, setHelp] = useState(false)
 
   const ruleLabel = config.rule === 'renju' ? '렌주' : '일반'
   const turnLabel = state.turn === 1 ? '흑' : '백'
+  const statusLabel =
+    thinking && config.opponentType !== 'human'
+      ? '생각 중…'
+      : `${turnLabel} 차례`
 
   return (
     <div className="screen game-screen">
@@ -26,7 +31,7 @@ export function GameScreen() {
           <span>백 {config.whitePlayer}</span>
         </div>
         <div className="game-meta">
-          <span>{state.moves.length}수 · {ruleLabel} · {turnLabel} 차례</span>
+          <span>{state.moves.length}수 · {ruleLabel} · {statusLabel}</span>
           {config.rule === 'renju' && (
             <button type="button" className="icon-btn-sm" onClick={() => setHelp(true)}>
               ?
@@ -50,7 +55,7 @@ export function GameScreen() {
         forbidden={state.forbidden}
         lastMove={state.lastMove}
         onCellClick={makeMove}
-        interactive={!config.isSpectate && !state.result}
+        interactive={!config.isSpectate && !state.result && !thinking}
       />
       {help && (
         <HelpModal title="렌주 금수" onClose={() => setHelp(false)}>
