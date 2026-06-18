@@ -4,6 +4,7 @@ import { HelpModal } from '../components/HelpModal'
 import { Button } from '../components/ui/Button'
 import { Toggle } from '../components/ui/Toggle'
 import { TopBar } from '../components/ui/TopBar'
+import { DEFAULT_RANK, winsRequiredForPromotion } from '../core/rank'
 import { getPlayAccountBindingNote } from '../services/account'
 import { getOnlineStatus } from '../services/network'
 import { useGameStore } from '../store/gameStore'
@@ -52,7 +53,8 @@ export function SettingsScreen() {
   const setScreen = useGameStore((s) => s.setScreen)
   const profile = useUserStore((s) => s.profile)
   const setNickname = useUserStore((s) => s.setNickname)
-  const { winsAtRank, winsRequired } = useUserStore((s) => s.getPromotionProgress())
+  const winsAtRank = useUserStore((s) => s.profile?.winsAtRank ?? 0)
+  const winsRequired = winsRequiredForPromotion(profile?.rank ?? DEFAULT_RANK)
   const settings = useSettingsStore((s) => s.settings)
   const setSoundEnabled = useSettingsStore((s) => s.setSoundEnabled)
   const setHapticEnabled = useSettingsStore((s) => s.setHapticEnabled)

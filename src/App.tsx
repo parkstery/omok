@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { initRapfiEngine, isRapfiReady } from './engine/rapfi/rapfiClient'
+import { initRapfiEngine } from './engine/rapfi/rapfiClient'
 import { useGameStore } from './store/gameStore'
 import { useUserStore } from './store/userStore'
 import { HomeScreen } from './screens/HomeScreen'
@@ -18,10 +18,27 @@ export function AppRouter() {
   const init = useUserStore((s) => s.init)
   const ready = useUserStore((s) => s.ready)
   const profile = useUserStore((s) => s.profile)
-  const [engineReady, setEngineReady] = useState(isRapfiReady())
+  const [engineReady, setEngineReady] = useState(false)
 
   useEffect(() => {
-    void initRapfiEngine().then((ok) => setEngineReady(ok || isRapfiReady()))
+    let cancelled = false
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) setEngineReady(true)
+    }, 4000)
+
+    void initRapfiEngine()
+      .catch(() => false)
+      .finally(() => {
+        if (!cancelled) {
+          window.clearTimeout(timeout)
+          setEngineReady(true)
+        }
+      })
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timeout)
+    }
   }, [])
 
   useEffect(() => {

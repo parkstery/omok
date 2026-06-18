@@ -1,4 +1,5 @@
 import { BannerAd } from '../components/BannerAd'
+import { DEFAULT_RANK, winsRequiredForPromotion } from '../core/rank'
 import { useGameStore } from '../store/gameStore'
 import { useUserStore } from '../store/userStore'
 
@@ -7,7 +8,9 @@ export function HomeScreen() {
   const startQuickComputer = useGameStore((s) => s.startQuickComputer)
   const initLocalPvp = useGameStore((s) => s.initLocalPvp)
   const profile = useUserStore((s) => s.profile)
-  const { winsAtRank, winsRequired } = useUserStore((s) => s.getPromotionProgress())
+  const winsAtRank = useUserStore((s) => s.profile?.winsAtRank ?? 0)
+  const rank = profile?.rank ?? DEFAULT_RANK
+  const winsRequired = winsRequiredForPromotion(rank)
 
   if (!profile) return null
 
