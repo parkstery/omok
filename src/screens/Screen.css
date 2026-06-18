@@ -27,11 +27,28 @@
   gap: 12px;
   padding: 16px;
   min-height: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
-.screen-main.compact {
+.screen-main.compact,
+.screen-main.scroll-main {
   justify-content: flex-start;
   padding-top: 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.picker-panel {
+  width: 100%;
+  max-width: var(--content-max);
+  flex-shrink: 0;
+}
+
+.content-panel {
+  width: 100%;
+  max-width: var(--content-max);
 }
 
 .home-main {
@@ -69,7 +86,7 @@
 
 .menu-btn {
   width: 100%;
-  max-width: 280px;
+  max-width: var(--content-max);
   padding: 16px 20px;
   border-radius: 12px;
   border: 2px solid #a1887f;
@@ -102,7 +119,7 @@
   display: flex;
   gap: 12px;
   width: 100%;
-  max-width: 280px;
+  max-width: var(--content-max);
 }
 
 .menu-row .menu-btn {
@@ -120,7 +137,11 @@
 
 .field {
   width: 100%;
-  max-width: 280px;
+  max-width: var(--content-max);
+}
+
+.field--wide {
+  max-width: var(--content-max);
 }
 
 .field label {
@@ -147,7 +168,7 @@
   background: #efebe9;
   border-radius: 8px;
   width: 100%;
-  max-width: 280px;
+  max-width: var(--content-max);
 }
 
 .code-box strong {
@@ -324,7 +345,7 @@
 
 .settings-section-title {
   width: 100%;
-  max-width: 300px;
+  max-width: var(--content-max);
   margin: 8px 0 0;
   font-size: 0.85rem;
   color: var(--text-muted);
@@ -455,7 +476,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   width: 100%;
-  max-width: 300px;
+  max-width: var(--content-max);
 }
 
 .home-grid .ui-card {
@@ -571,7 +592,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  max-width: 300px;
+  max-width: var(--content-max);
 }
 
 .pvp-waiting__title {
@@ -588,7 +609,7 @@
 
 .onboarding-hero {
   text-align: center;
-  max-width: 300px;
+  max-width: var(--content-max);
 }
 
 .onboarding-hero h1 {
@@ -603,10 +624,6 @@
   color: var(--text-muted);
 }
 
-.field--wide {
-  max-width: 300px;
-}
-
 .license-main {
   align-items: stretch;
   overflow-y: auto;
@@ -614,7 +631,7 @@
 
 .license-block {
   width: 100%;
-  max-width: 300px;
+  max-width: var(--content-max);
   padding: 14px;
   border-radius: var(--radius-md);
   background: var(--bg-surface);
@@ -650,7 +667,7 @@
 .license-note {
   font-size: 0.75rem;
   color: var(--text-muted);
-  max-width: 300px;
+  max-width: var(--content-max);
   line-height: 1.5;
 }
 

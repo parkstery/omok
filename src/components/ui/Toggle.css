@@ -4,7 +4,7 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  max-width: 300px;
+  max-width: var(--content-max);
   padding: 12px 14px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
@@ -71,7 +71,7 @@
   display: flex;
   gap: 8px;
   width: 100%;
-  max-width: 300px;
+  max-width: var(--content-max);
 }
 
 .setting-segment button {

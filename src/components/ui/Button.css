@@ -34,7 +34,7 @@
 
 .ui-btn--full {
   width: 100%;
-  max-width: 300px;
+  max-width: var(--content-max);
 }
 
 .ui-btn--primary {

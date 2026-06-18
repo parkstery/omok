@@ -1,5 +1,7 @@
 import { BannerAd } from '../components/BannerAd'
 import { RankPicker } from '../components/RankPicker'
+import { Button } from '../components/ui/Button'
+import { TopBar } from '../components/ui/TopBar'
 import { isAiRecommended } from '../engine/ranks'
 import { useGameStore } from '../store/gameStore'
 import './Screen.css'
@@ -13,21 +15,17 @@ export function ComputerRankScreen() {
   return (
     <div className="screen">
       <BannerAd />
-      <header className="screen-header">
-        <button type="button" className="text-btn" onClick={() => setScreen('computer-type')}>
-          ←
-        </button>
-        <span>급·단 선택</span>
-        <span />
-      </header>
-      <main className="screen-main compact">
-        <RankPicker value={pendingRank} onChange={setPendingRank} />
+      <TopBar title="급·단 선택" onBack={() => setScreen('computer-type')} />
+      <main className="screen-main compact scroll-main">
+        <div className="picker-panel">
+          <RankPicker value={pendingRank} onChange={setPendingRank} />
+        </div>
         {pendingOpponentType === 'engine' && isAiRecommended(pendingRank) && (
-          <p className="hint warn">7단 이상은 AI 대전을 권장합니다.</p>
+          <p className="hint warn content-panel">7단 이상은 AI 대전을 권장합니다.</p>
         )}
-        <button type="button" className="menu-btn primary" onClick={() => setScreen('computer-rule')}>
+        <Button variant="primary" size="lg" fullWidth onClick={() => setScreen('computer-rule')}>
           다음
-        </button>
+        </Button>
       </main>
     </div>
   )

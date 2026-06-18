@@ -64,7 +64,7 @@ export function SettingsScreen() {
     <div className="screen">
       <BannerAd />
       <TopBar title="설정" onBack={() => setScreen('home')} onHelp={() => setHelp(true)} />
-      <main className="screen-main compact settings-main">
+      <main className="screen-main compact scroll-main settings-main">
         <div className="field">
           <label>닉네임</label>
           <input
@@ -73,7 +73,7 @@ export function SettingsScreen() {
             onChange={(e) => setNickname(e.target.value)}
           />
         </div>
-        <div className="field field--wide">
+        <div className="field field--wide picker-panel">
           <label>급·단</label>
           <RankPicker value={profile?.rank ?? '15급'} onChange={setRank} />
         </div>

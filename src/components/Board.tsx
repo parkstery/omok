@@ -29,7 +29,7 @@ export function Board({
   const boardScale = useSettingsStore((s) => s.settings.boardScale)
   const padding = compact ? 8 : 12
   const heightOffset = boardScale === 'large' ? 160 : 220
-  const maxBoard = compact ? 'min(280px, 72vw)' : `min(100vw - 24px, 100vh - ${heightOffset}px)`
+  const maxBoard = compact ? 'min(280px, 92%)' : `min(100%, calc(100dvh - ${heightOffset}px))`
   const cellSize = `calc((${maxBoard} - ${padding * 2}px) / ${size - 1})`
 
   return (

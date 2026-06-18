@@ -24,4 +24,20 @@
   --font: 'Noto Sans KR', system-ui, -apple-system, sans-serif;
   --topbar-h: 48px;
   --banner-h: 50px;
+  --content-max: 100%;
+  --shell-max: 100%;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --content-max: 520px;
+    --shell-max: 560px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --content-max: 640px;
+    --shell-max: 720px;
+  }
 }

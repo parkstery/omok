@@ -15,7 +15,7 @@ export function OnboardingScreen() {
 
   return (
     <div className="screen onboarding-screen">
-      <main className="screen-main onboarding-main">
+      <main className="screen-main onboarding-main scroll-main">
         <div className="onboarding-hero">
           <h1>환영합니다</h1>
           <p>닉네임과 급·단을 설정하면 대국을 시작할 수 있습니다.</p>
@@ -31,7 +31,7 @@ export function OnboardingScreen() {
             maxLength={12}
           />
         </div>
-        <div className="field field--wide">
+        <div className="field field--wide picker-panel">
           <label>급·단</label>
           <RankPicker value={rank} onChange={setRank} />
         </div>
