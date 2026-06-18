@@ -19,6 +19,8 @@ export type Screen =
   | 'records'
   | 'replay'
   | 'settings'
+  | 'onboarding'
+  | 'license'
 
 export interface Move {
   x: number
@@ -69,5 +71,6 @@ export interface UserProfile {
   nickname: string
   rank: string
   createdAt: number
+  onboardingComplete?: boolean
   stats: { wins: number; losses: number; draws: number }
 }

@@ -9,9 +9,9 @@ body,
   padding: 0;
   height: 100%;
   overflow: hidden;
-  font-family: 'Noto Sans KR', system-ui, -apple-system, sans-serif;
-  background: #fff8e1;
-  color: #3e2723;
+  font-family: var(--font);
+  background: var(--bg-cream);
+  color: var(--text-primary);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
@@ -20,22 +20,6 @@ button {
   font-family: inherit;
 }
 
-.splash {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(160deg, #dcb35c, #8d6e63);
-  color: #fff;
-}
-
-.splash h1 {
-  font-size: 2.5rem;
-  margin: 0 0 8px;
-}
-
-.splash p {
-  margin: 0;
-  opacity: 0.9;
+a {
+  color: var(--accent-dark);
 }

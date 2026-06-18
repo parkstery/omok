@@ -1,0 +1,15 @@
+# Third-Party Licenses
+
+## Rapfi (GPL-3.0)
+
+Computer opponent uses Rapfi WASM engine.
+Source: https://github.com/dhbloo/rapfi
+License: GNU General Public License v3.0
+
+## @algorithm.ts/gomoku (MIT)
+
+Fallback AI engine when Rapfi is unavailable.
+
+## This application
+
+Source: https://github.com/parkstery/omok

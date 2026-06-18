@@ -9,8 +9,10 @@ import {
 } from '../core/game'
 import type { Color, GameConfig, GameRecord, GameState, Move, Rule, Screen } from '../core/types'
 import { findEngineMoveAsync } from '../engine/computer'
+import { playMoveFeedback, playWinFeedback } from '../services/feedback'
 import { saveGameRecord } from '../services/replay'
 import { showInterstitialAd } from '../services/ads'
+import { useUserStore } from './userStore'
 
 interface GameStore {
   screen: Screen
@@ -129,6 +131,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (next.moves.length === state.moves.length) return
 
     set({ state: next })
+    playMoveFeedback()
 
     if (next.result) {
       void get().finishAndSave()
@@ -252,8 +255,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   finishAndSave: async () => {
-    const { config, state } = get()
+    const { config, state, humanColor } = get()
     if (!state.result) return
+
+    if (config.opponentType !== 'human') {
+      if (state.result === 'draw') {
+        useUserStore.getState().recordGameResult('draw')
+      } else {
+        const won =
+          (state.result === 'black_win' && humanColor === 1) ||
+          (state.result === 'white_win' && humanColor === 2)
+        useUserStore.getState().recordGameResult(won ? 'win' : 'loss')
+        if (won) playWinFeedback()
+      }
+    }
 
     await showInterstitialAd()
     await saveGameRecord(config, state)

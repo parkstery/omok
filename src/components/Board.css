@@ -8,10 +8,37 @@
 
 .board {
   display: grid;
-  background: linear-gradient(145deg, #dcb35c 0%, #c4a574 100%);
-  border: 3px solid #5d4037;
-  border-radius: 4px;
-  box-shadow: inset 0 0 20px rgba(93, 64, 55, 0.2);
+  --wood-light: #e8c06a;
+  --wood-mid: #d4a24c;
+  --wood-dark: #b88432;
+  --wood-frame: #6d4c2a;
+  --line-color: #3e2723;
+
+  background-color: var(--wood-mid);
+  background-image:
+    repeating-linear-gradient(
+      92deg,
+      transparent 0,
+      transparent 11px,
+      rgba(109, 76, 42, 0.07) 11px,
+      rgba(109, 76, 42, 0.07) 12px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 28px,
+      rgba(80, 50, 20, 0.04) 28px,
+      rgba(80, 50, 20, 0.04) 30px
+    ),
+    radial-gradient(ellipse at 30% 20%, rgba(255, 230, 160, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 85%, rgba(90, 55, 20, 0.12) 0%, transparent 50%),
+    linear-gradient(155deg, var(--wood-light) 0%, var(--wood-mid) 42%, var(--wood-dark) 100%);
+  border: 4px solid var(--wood-frame);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 2px 6px rgba(255, 220, 140, 0.25),
+    inset 0 -3px 10px rgba(60, 35, 15, 0.18),
+    0 4px 14px rgba(60, 35, 15, 0.28);
   position: relative;
 }
 
@@ -27,21 +54,15 @@
   justify-content: center;
 }
 
-.cell::before {
-  content: '';
-  position: absolute;
-  background: #4e342e;
-  pointer-events: none;
-}
-
+.cell::before,
 .cell::after {
   content: '';
   position: absolute;
-  background: #4e342e;
+  background: var(--line-color);
   pointer-events: none;
 }
 
-/* horizontal line */
+/* horizontal line — 교차점 중심, 기본은 양쪽으로 반 칸 */
 .cell::before {
   width: 100%;
   height: 1px;
@@ -57,6 +78,27 @@
   left: 50%;
   top: 0;
   transform: translateX(-50%);
+}
+
+/* 가장자리: 선이 판 밖으로 튀어나가지 않도록 안쪽 반 칸만 */
+.cell.edge-left::before {
+  left: 50%;
+  width: 50%;
+}
+
+.cell.edge-right::before {
+  left: 0;
+  width: 50%;
+}
+
+.cell.edge-top::after {
+  top: 50%;
+  height: 50%;
+}
+
+.cell.edge-bottom::after {
+  top: 0;
+  height: 50%;
 }
 
 .cell.readonly {
@@ -87,7 +129,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #4e342e;
+  background: var(--line-color);
   position: relative;
   z-index: 1;
 }
@@ -102,8 +144,32 @@
 }
 
 .cell.last .stone {
-  outline: 2px solid #ff8f00;
+  outline: 2px solid var(--accent);
   outline-offset: 1px;
+}
+
+.cell.win .stone {
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 12px rgba(255, 143, 0, 0.65);
+  animation: win-glow 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes win-glow {
+  from {
+    box-shadow:
+      0 0 0 2px var(--accent),
+      0 0 8px rgba(255, 143, 0, 0.45);
+  }
+  to {
+    box-shadow:
+      0 0 0 3px var(--accent-dark),
+      0 0 16px rgba(255, 143, 0, 0.75);
+  }
+}
+
+.board-wrap--compact {
+  flex: 0;
 }
 
 @keyframes place {

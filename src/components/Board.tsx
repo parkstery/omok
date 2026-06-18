@@ -7,8 +7,10 @@ interface BoardProps {
   size?: number
   forbidden?: { x: number; y: number }[]
   lastMove?: { x: number; y: number } | null
+  winLine?: { x: number; y: number }[]
   onCellClick?: (x: number, y: number) => void
   interactive?: boolean
+  compact?: boolean
 }
 
 export function Board({
@@ -16,15 +18,19 @@ export function Board({
   size = BOARD_SIZE,
   forbidden = [],
   lastMove = null,
+  winLine = [],
   onCellClick,
   interactive = true,
+  compact = false,
 }: BoardProps) {
   const forbiddenSet = new Set(forbidden.map((p) => `${p.x},${p.y}`))
-  const padding = 12
-  const cellSize = `calc((min(100vw - 24px, 100vh - 220px) - ${padding * 2}px) / ${size - 1})`
+  const winSet = new Set(winLine.map((p) => `${p.x},${p.y}`))
+  const padding = compact ? 8 : 12
+  const maxBoard = compact ? 'min(280px, 72vw)' : 'min(100vw - 24px, 100vh - 220px)'
+  const cellSize = `calc((${maxBoard} - ${padding * 2}px) / ${size - 1})`
 
   return (
-    <div className="board-wrap">
+    <div className={`board-wrap${compact ? ' board-wrap--compact' : ''}`}>
       <div
         className="board"
         style={{
@@ -39,6 +45,7 @@ export function Board({
           const stone = board[y]?.[x] ?? 0
           const isForbidden = forbiddenSet.has(`${x},${y}`)
           const isLast = lastMove?.x === x && lastMove?.y === y
+          const isWin = winSet.has(`${x},${y}`)
           const isStar =
             (size === 15 &&
               ((x === 3 && y === 3) ||
@@ -48,6 +55,10 @@ export function Board({
                 (x === 11 && y === 11))) ||
             (size === 19 &&
               [3, 9, 15].some((a) => [3, 9, 15].some((b) => a === x && b === y)))
+          const edgeLeft = x === 0
+          const edgeRight = x === size - 1
+          const edgeTop = y === 0
+          const edgeBottom = y === size - 1
 
           return (
             <button
@@ -55,10 +66,15 @@ export function Board({
               type="button"
               className={[
                 'cell',
+                edgeLeft ? 'edge-left' : '',
+                edgeRight ? 'edge-right' : '',
+                edgeTop ? 'edge-top' : '',
+                edgeBottom ? 'edge-bottom' : '',
                 stone === 1 ? 'black' : '',
                 stone === 2 ? 'white' : '',
                 isForbidden ? 'forbidden' : '',
                 isLast ? 'last' : '',
+                isWin ? 'win' : '',
                 !interactive ? 'readonly' : '',
               ]
                 .filter(Boolean)

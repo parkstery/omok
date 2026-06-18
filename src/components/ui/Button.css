@@ -1,0 +1,81 @@
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  border: 2px solid transparent;
+}
+
+.ui-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ui-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ui-btn--md {
+  padding: 14px 20px;
+  min-height: 48px;
+}
+
+.ui-btn--lg {
+  padding: 16px 24px;
+  min-height: 52px;
+  font-size: 1.05rem;
+}
+
+.ui-btn--full {
+  width: 100%;
+  max-width: 300px;
+}
+
+.ui-btn--primary {
+  background: var(--text-primary);
+  border-color: #2c1810;
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.ui-btn--secondary {
+  background: var(--bg-surface);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.ui-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 8px 12px;
+  min-height: auto;
+}
+
+.ui-btn--danger {
+  background: transparent;
+  border-color: transparent;
+  color: var(--danger);
+  font-weight: 500;
+  padding: 8px 12px;
+  min-height: auto;
+}
+
+.ui-btn__sub {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 400;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.ui-btn--column {
+  flex-direction: column;
+}

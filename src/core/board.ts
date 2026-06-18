@@ -88,3 +88,45 @@ export function getEmptyCells(board: Stone[][], size = BOARD_SIZE): { x: number;
   }
   return cells
 }
+
+/** 승리한 5목 좌표. lastMove 포함 5칸 반환 */
+export function getWinningLine(
+  board: Stone[][],
+  x: number,
+  y: number,
+  color: Color,
+  size = BOARD_SIZE,
+): { x: number; y: number }[] | null {
+  if (getStone(board, x, y, size) !== color) return null
+
+  for (const [dx, dy] of DIRECTIONS) {
+    let left = 0
+    let nx = x - dx
+    let ny = y - dy
+    while (getStone(board, nx, ny, size) === color) {
+      left++
+      nx -= dx
+      ny -= dy
+    }
+    let right = 0
+    nx = x + dx
+    ny = y + dy
+    while (getStone(board, nx, ny, size) === color) {
+      right++
+      nx += dx
+      ny += dy
+    }
+    const total = left + right + 1
+    if (total < 5) continue
+
+    const takeLeft = Math.min(left, 4)
+    const sx = x - takeLeft * dx
+    const sy = y - takeLeft * dy
+    const line: { x: number; y: number }[] = []
+    for (let i = 0; i < 5; i++) {
+      line.push({ x: sx + dx * i, y: sy + dy * i })
+    }
+    return line
+  }
+  return null
+}

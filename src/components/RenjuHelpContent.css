@@ -1,0 +1,40 @@
+.renju-help {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.renju-help__lead {
+  margin: 0 0 16px;
+}
+
+.renju-help__section {
+  margin-bottom: 16px;
+}
+
+.renju-help__section h4 {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.renju-help__section p {
+  margin: 0 0 8px;
+}
+
+.renju-help__figure {
+  margin: 0;
+}
+
+.renju-help__svg {
+  width: 100%;
+  max-width: 240px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.renju-help__figure figcaption {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

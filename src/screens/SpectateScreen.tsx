@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { BannerAd } from '../components/BannerAd'
 import { HelpModal } from '../components/HelpModal'
+import { RankPicker } from '../components/RankPicker'
+import { Button } from '../components/ui/Button'
+import { TopBar } from '../components/ui/TopBar'
 import { getPlayAccountBindingNote } from '../services/account'
 import { getOnlineStatus } from '../services/network'
 import { useGameStore } from '../store/gameStore'
@@ -16,15 +19,7 @@ export function SpectateScreen() {
   return (
     <div className="screen">
       <BannerAd />
-      <header className="screen-header">
-        <button type="button" className="text-btn" onClick={() => setScreen('home')}>
-          ←
-        </button>
-        <span>관전</span>
-        <button type="button" className="icon-btn-sm" onClick={() => setHelp(true)}>
-          ?
-        </button>
-      </header>
+      <TopBar title="관전" onBack={() => setScreen('home')} onHelp={() => setHelp(true)} />
       <main className="screen-main compact">
         <p className="status-line">
           {getOnlineStatus() === 'ready' ? '실시간 관전 가능' : 'Firebase 설정 후 활성화'}
@@ -62,15 +57,7 @@ export function SettingsScreen() {
   return (
     <div className="screen">
       <BannerAd />
-      <header className="screen-header">
-        <button type="button" className="text-btn" onClick={() => setScreen('home')}>
-          ←
-        </button>
-        <span>설정</span>
-        <button type="button" className="icon-btn-sm" onClick={() => setHelp(true)}>
-          ?
-        </button>
-      </header>
+      <TopBar title="설정" onBack={() => setScreen('home')} onHelp={() => setHelp(true)} />
       <main className="screen-main compact">
         <div className="field">
           <label>닉네임</label>
@@ -80,18 +67,17 @@ export function SettingsScreen() {
             onChange={(e) => setNickname(e.target.value)}
           />
         </div>
-        <div className="field">
-          <label>급·단 (자가 신고)</label>
-          <input
-            className="text-input"
-            value={profile?.rank ?? '15급'}
-            onChange={(e) => setRank(e.target.value)}
-          />
+        <div className="field field--wide">
+          <label>급·단</label>
+          <RankPicker value={profile?.rank ?? '15급'} onChange={setRank} />
         </div>
         <div className="field">
           <label>게임 ID</label>
           <code className="game-id">{profile?.gameId ?? '-'}</code>
         </div>
+        <Button variant="secondary" fullWidth onClick={() => setScreen('license')}>
+          오픈소스 라이선스
+        </Button>
       </main>
       {help && (
         <HelpModal title="계정" onClose={() => setHelp(false)}>

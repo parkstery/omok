@@ -4,7 +4,7 @@
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: #fff8e1;
+  background: var(--bg-cream);
 }
 
 .screen-header,
@@ -303,5 +303,197 @@
 
 .result-mini {
   font-size: 0.8rem;
-  color: #5d4037;
+  color: var(--text-primary);
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.home-grid .ui-card {
+  max-width: none;
+}
+
+.game-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-cream);
+  flex-shrink: 0;
+}
+
+.game-bar__players {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.player-chip--black {
+  color: var(--text-primary);
+}
+
+.player-chip--white {
+  color: var(--text-secondary);
+}
+
+.game-bar__vs {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.75rem;
+}
+
+.game-bar__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.game-bar__help {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.game-bar__actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.board-area {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thinking-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 248, 225, 0.55);
+  pointer-events: none;
+}
+
+.thinking-overlay span {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--text-primary);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: pulse-badge 1.2s ease-in-out infinite;
+}
+
+.onboarding-main {
+  justify-content: center;
+  gap: 16px;
+}
+
+.onboarding-hero {
+  text-align: center;
+  max-width: 300px;
+}
+
+.onboarding-hero h1 {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+  color: var(--text-primary);
+}
+
+.onboarding-hero p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.field--wide {
+  max-width: 300px;
+}
+
+.license-main {
+  align-items: stretch;
+  overflow-y: auto;
+}
+
+.license-block {
+  width: 100%;
+  max-width: 300px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+}
+
+.license-block h3 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.license-block p {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.license-link {
+  color: var(--accent-dark);
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.license-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.license-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.result-personal {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.result-personal.win {
+  color: var(--success);
+}
+
+.result-personal.loss {
+  color: var(--danger);
+}
+
+.result-stats {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }

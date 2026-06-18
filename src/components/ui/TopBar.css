@@ -1,0 +1,39 @@
+.ui-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--topbar-h);
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-cream);
+  flex-shrink: 0;
+}
+
+.ui-topbar__side {
+  min-width: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.ui-topbar__side--right {
+  justify-content: flex-end;
+}
+
+.ui-topbar__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  flex: 1;
+}
+
+.ui-topbar__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}

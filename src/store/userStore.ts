@@ -8,6 +8,12 @@ interface UserStore {
   init: () => Promise<void>
   setNickname: (nickname: string) => void
   setRank: (rank: string) => void
+  completeOnboarding: (nickname: string, rank: string) => void
+  recordGameResult: (result: 'win' | 'loss' | 'draw') => void
+}
+
+function saveProfile(profile: UserProfile) {
+  localStorage.setItem('omok_profile', JSON.stringify(profile))
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -24,7 +30,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     if (!profile) return
     const next = { ...profile, nickname }
     set({ profile: next })
-    localStorage.setItem('omok_profile', JSON.stringify(next))
+    saveProfile(next)
   },
 
   setRank: (rank) => {
@@ -32,6 +38,26 @@ export const useUserStore = create<UserStore>((set, get) => ({
     if (!profile) return
     const next = { ...profile, rank }
     set({ profile: next })
-    localStorage.setItem('omok_profile', JSON.stringify(next))
+    saveProfile(next)
+  },
+
+  completeOnboarding: (nickname, rank) => {
+    const { profile } = get()
+    if (!profile) return
+    const next = { ...profile, nickname, rank, onboardingComplete: true }
+    set({ profile: next })
+    saveProfile(next)
+  },
+
+  recordGameResult: (result) => {
+    const { profile } = get()
+    if (!profile) return
+    const stats = { ...profile.stats }
+    if (result === 'win') stats.wins++
+    else if (result === 'loss') stats.losses++
+    else stats.draws++
+    const next = { ...profile, stats }
+    set({ profile: next })
+    saveProfile(next)
   },
 }))

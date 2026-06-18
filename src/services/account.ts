@@ -6,7 +6,15 @@ const PROFILE_KEY = 'omok_profile'
 export async function ensureUserProfile(): Promise<UserProfile> {
   const stored = localStorage.getItem(PROFILE_KEY)
   if (stored) {
-    return JSON.parse(stored) as UserProfile
+    const profile = JSON.parse(stored) as UserProfile
+    if (profile.onboardingComplete === undefined) {
+      profile.onboardingComplete = !profile.nickname.startsWith('Guest-')
+    }
+    if (!profile.stats) {
+      profile.stats = { wins: 0, losses: 0, draws: 0 }
+    }
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile))
+    return profile
   }
 
   const profile: UserProfile = {
@@ -14,6 +22,7 @@ export async function ensureUserProfile(): Promise<UserProfile> {
     nickname: `Guest-${uuidv4().slice(0, 4)}`,
     rank: '15급',
     createdAt: Date.now(),
+    onboardingComplete: false,
     stats: { wins: 0, losses: 0, draws: 0 },
   }
 

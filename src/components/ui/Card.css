@@ -1,0 +1,33 @@
+.ui-card {
+  background: var(--bg-surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.ui-card--clickable {
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ui-card--clickable:active {
+  transform: scale(0.99);
+  box-shadow: var(--shadow-md);
+}
+
+.ui-card__title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ui-card__desc {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
