@@ -11,6 +11,7 @@ import './Screen.css'
 export function GameScreen() {
   const config = useGameStore((s) => s.config)
   const state = useGameStore((s) => s.state)
+  const humanColor = useGameStore((s) => s.humanColor)
   const makeMove = useGameStore((s) => s.makeMove)
   const resign = useGameStore((s) => s.resign)
   const goHome = useGameStore((s) => s.goHome)
@@ -18,9 +19,17 @@ export function GameScreen() {
   const [help, setHelp] = useState(false)
 
   const ruleLabel = config.rule === 'renju' ? '렌주' : '일반'
+  const isMyTurn = config.isLocal || state.turn === humanColor
   const turnLabel = state.turn === 1 ? '흑' : '백'
   const statusLabel =
-    thinking && config.opponentType !== 'human' ? '생각 중…' : `${turnLabel} 차례`
+    thinking && config.opponentType !== 'human'
+      ? '생각 중…'
+      : !config.isLocal && !isMyTurn
+        ? '상대 차례'
+        : `${turnLabel} 차례`
+
+  const canInteract =
+    !config.isSpectate && !state.result && !thinking && (config.isLocal || isMyTurn)
 
   return (
     <div className="screen game-screen">
@@ -32,9 +41,10 @@ export function GameScreen() {
           <span className="player-chip player-chip--white">○ {config.whitePlayer}</span>
         </div>
         <div className="game-bar__meta">
+          {!config.isLocal && <StatusBadge>온라인</StatusBadge>}
           <StatusBadge>{state.moves.length}수</StatusBadge>
           <StatusBadge tone="accent">{ruleLabel}</StatusBadge>
-          <StatusBadge tone={thinking ? 'thinking' : 'turn'}>{statusLabel}</StatusBadge>
+          <StatusBadge tone={thinking ? 'thinking' : isMyTurn ? 'turn' : 'default'}>{statusLabel}</StatusBadge>
           {config.rule === 'renju' && (
             <button type="button" className="game-bar__help" onClick={() => setHelp(true)} aria-label="렌주 도움말">
               ?
@@ -58,13 +68,18 @@ export function GameScreen() {
             <span>AI 생각 중…</span>
           </div>
         )}
+        {!config.isLocal && !isMyTurn && !state.result && (
+          <div className="waiting-overlay" aria-live="polite">
+            <span>상대 착수 대기…</span>
+          </div>
+        )}
         <Board
           board={state.board}
           size={config.boardSize}
           forbidden={state.forbidden}
           lastMove={state.lastMove}
           onCellClick={makeMove}
-          interactive={!config.isSpectate && !state.result && !thinking}
+          interactive={canInteract}
         />
       </div>
       {help && (

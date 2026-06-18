@@ -17,7 +17,7 @@ let db: Firestore | null = null
 let rtdb: Database | null = null
 
 export function isFirebaseConfigured(): boolean {
-  return Boolean(firebaseConfig.apiKey && firebaseConfig.projectId)
+  return Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.databaseURL)
 }
 
 export function getFirebaseApp(): FirebaseApp | null {

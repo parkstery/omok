@@ -10,6 +10,14 @@ import {
 import type { Color, GameConfig, GameRecord, GameState, Move, Rule, Screen } from '../core/types'
 import { findEngineMoveAsync } from '../engine/computer'
 import { playMoveFeedback, playWinFeedback } from '../services/feedback'
+import {
+  abandonRoom,
+  buildStateFromRoom,
+  pushMove,
+  setRoomResult,
+  type RoomData,
+} from '../services/network'
+import { startRoomSync, stopRoomSync } from '../services/pvpSession'
 import { saveGameRecord } from '../services/replay'
 import { showInterstitialAd } from '../services/ads'
 import { useUserStore } from './userStore'
@@ -31,6 +39,8 @@ interface GameStore {
 
   setScreen: (screen: Screen) => void
   initLocalPvp: (rule: Rule, blackRank: string, whiteRank: string) => void
+  enterOnlineGame: (roomId: string, room: RoomData, role: 'host' | 'guest') => void
+  syncOnlineRoom: (room: RoomData) => void
   initComputer: (type: 'engine' | 'ai', rank: string, rule: Rule, color: Color | 'random') => void
   makeMove: (x: number, y: number) => void
   runComputerTurn: () => void
@@ -76,6 +86,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setScreen: (screen) => set({ screen }),
 
   initLocalPvp: (rule, blackRank, whiteRank) => {
+    stopRoomSync()
     const resolved = resolveRule(rule, blackRank, whiteRank)
     const state = createInitialState()
     set({
@@ -92,6 +103,61 @@ export const useGameStore = create<GameStore>((set, get) => ({
       state: { ...state, forbidden: getForbiddenPreview(state, resolved) },
       humanColor: 1,
     })
+  },
+
+  enterOnlineGame: (roomId, room, role) => {
+    stopRoomSync()
+    const resolved = resolveRule(room.rule, room.host.rank, room.guest?.rank ?? room.host.rank)
+    const humanColor = role === 'host' ? 1 : 2
+    const state = buildStateFromRoom({ ...room, rule: resolved })
+
+    set({
+      screen: 'game',
+      roomCode: roomId.toUpperCase(),
+      humanColor,
+      config: defaultConfig({
+        rule: resolved,
+        opponentType: 'human',
+        isLocal: false,
+        roomId: roomId.toUpperCase(),
+        blackPlayer: room.host.name,
+        whitePlayer: room.guest?.name ?? '상대',
+        blackRank: room.host.rank,
+        whiteRank: room.guest?.rank ?? '15급',
+      }),
+      state,
+    })
+
+    startRoomSync(roomId, (updated) => {
+      if (updated) get().syncOnlineRoom(updated)
+    })
+  },
+
+  syncOnlineRoom: (room) => {
+    const { config, screen } = get()
+    if (config.isLocal || !config.roomId || screen !== 'game') return
+
+    const resolved = resolveRule(room.rule, room.host.rank, room.guest?.rank ?? room.host.rank)
+    const nextState = buildStateFromRoom({ ...room, rule: resolved })
+    const prevMoveCount = get().state.moves.length
+
+    set({
+      state: nextState,
+      config: {
+        ...config,
+        rule: resolved,
+        whitePlayer: room.guest?.name ?? config.whitePlayer,
+        whiteRank: room.guest?.rank ?? config.whiteRank,
+      },
+    })
+
+    if (nextState.moves.length > prevMoveCount) {
+      playMoveFeedback()
+    }
+
+    if (nextState.result && get().screen === 'game') {
+      void get().finishAndSave()
+    }
   },
 
   initComputer: (type, rank, rule, color) => {
@@ -124,8 +190,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const { config, state, humanColor } = get()
     if (config.isSpectate || state.result) return
 
-    const isHumanTurn =
-      config.opponentType === 'human' ? true : state.turn === humanColor
+    const isHumanTurn = config.isLocal
+      ? config.opponentType === 'human' || state.turn === humanColor
+      : state.turn === humanColor
     if (!isHumanTurn) return
 
     const next = applyMove(state, x, y, state.turn, config.rule, config.boardSize)
@@ -133,6 +200,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     set({ state: next })
     playMoveFeedback()
+
+    if (!config.isLocal && config.roomId) {
+      const move = next.moves[next.moves.length - 1]
+      void (async () => {
+        await pushMove(config.roomId!, move)
+        if (next.result) {
+          await setRoomResult(config.roomId!, next.result)
+          await get().finishAndSave()
+        }
+      })()
+      return
+    }
 
     if (next.result) {
       void get().finishAndSave()
@@ -169,12 +248,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   resign: () => {
-    const { state, humanColor } = get()
+    const { state, humanColor, config } = get()
     if (state.result) return
     const winner = humanColor === 1 ? 'white_win' : 'black_win'
+    if (!config.isLocal && config.roomId) {
+      void setRoomResult(config.roomId, winner)
+    }
     set({
       state: { ...state, result: winner },
-      screen: 'result',
     })
     void get().finishAndSave()
   },
@@ -191,12 +272,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 
-  goHome: () =>
+  goHome: () => {
+    const { config, roomCode } = get()
+    if (!config.isLocal && roomCode) {
+      void abandonRoom(roomCode)
+    }
+    stopRoomSync()
     set({
       screen: 'home',
       state: createInitialState(),
       config: defaultConfig(),
-    }),
+      roomCode: '',
+    })
+  },
 
   setPendingOpponentType: (type) => set({ pendingOpponentType: type }),
   setPendingRank: (rank) => {
@@ -256,10 +344,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   finishAndSave: async () => {
-    const { config, state, humanColor } = get()
-    if (!state.result) return
+    const { config, state, humanColor, screen } = get()
+    if (!state.result || screen === 'result') return
 
-    if (config.opponentType !== 'human') {
+    if (config.opponentType !== 'human' && config.isLocal) {
+      if (state.result === 'draw') {
+        useUserStore.getState().recordGameResult('draw')
+      } else {
+        const won =
+          (state.result === 'black_win' && humanColor === 1) ||
+          (state.result === 'white_win' && humanColor === 2)
+        useUserStore.getState().recordGameResult(won ? 'win' : 'loss')
+        if (won) playWinFeedback()
+      }
+    } else if (!config.isLocal) {
       if (state.result === 'draw') {
         useUserStore.getState().recordGameResult('draw')
       } else {
