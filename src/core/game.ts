@@ -7,7 +7,13 @@ import {
   opponent,
   placeStone,
 } from './board'
-import { getRenjuForbiddenPoints, isRenjuForbidden, isValidRenjuMove } from './renju'
+import {
+  getRenjuForbiddenPoints,
+  getStandardForbiddenPoints,
+  isRenjuForbidden,
+  isValidRenjuMove,
+  isValidStandardMove,
+} from './renju'
 import type { Color, GameConfig, GameResult, GameState, Move, Rule } from './types'
 import { BOARD_SIZE } from './types'
 
@@ -29,9 +35,16 @@ export function mustUseRenju(rankLabel: string): boolean {
   return !Number.isNaN(kyu) && kyu <= 3
 }
 
-export function resolveRule(requested: Rule, blackRank: string, whiteRank: string): Rule {
-  if (mustUseRenju(blackRank) || mustUseRenju(whiteRank)) return 'renju'
+export function resolveRule(requested: Rule, _blackRank?: string, _whiteRank?: string): Rule {
   return requested
+}
+
+export function ruleLabel(rule: Rule): string {
+  return rule === 'renju' ? '렌주' : '일반'
+}
+
+export function blackHasForbiddenMarks(rule: Rule): boolean {
+  return rule === 'freestyle' || rule === 'renju'
 }
 
 export function isMoveValid(
@@ -44,7 +57,9 @@ export function isMoveValid(
 ): boolean {
   if (state.result) return false
   if (!isEmpty(state.board, x, y)) return false
-  if (rule === 'renju' && color === 1) return isValidRenjuMove(state.board, x, y, color, size)
+  if (color === 2) return true
+  if (rule === 'renju') return isValidRenjuMove(state.board, x, y, color, size)
+  if (rule === 'freestyle') return isValidStandardMove(state.board, x, y, color, size)
   return true
 }
 
@@ -71,7 +86,13 @@ export function applyMove(
 
   const turn = opponent(color)
   const forbidden =
-    rule === 'renju' && turn === 1 && !result ? getRenjuForbiddenPoints(board, size) : []
+    !result && turn === 1
+      ? rule === 'renju'
+        ? getRenjuForbiddenPoints(board, size)
+        : rule === 'freestyle'
+          ? getStandardForbiddenPoints(board, size)
+          : []
+      : []
 
   return {
     board,
@@ -110,8 +131,10 @@ export function getForbiddenPreview(
   rule: Rule,
   size = BOARD_SIZE,
 ): { x: number; y: number }[] {
-  if (rule !== 'renju' || state.turn !== 1 || state.result) return []
-  return getRenjuForbiddenPoints(state.board, size)
+  if (state.turn !== 1 || state.result) return []
+  if (rule === 'renju') return getRenjuForbiddenPoints(state.board, size)
+  if (rule === 'freestyle') return getStandardForbiddenPoints(state.board, size)
+  return []
 }
 
 export function pickPlayerColor(choice: Color | 'random'): Color {

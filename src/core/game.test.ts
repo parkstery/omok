@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { checkWin, createEmptyBoard, getWinningLine, placeStone } from '../core/board'
-import { applyMove, createInitialState, mustUseRenju, resolveRule, undoMoves } from '../core/game'
-import { isRenjuForbidden, isValidRenjuMove } from '../core/renju'
+import { applyMove, createInitialState, resolveRule, ruleLabel, undoMoves } from '../core/game'
+import { isRenjuForbidden, isStandardForbidden, isValidRenjuMove } from '../core/renju'
 
 describe('board', () => {
   it('finds winning line of five', () => {
@@ -21,11 +21,14 @@ describe('game rules', () => {
     expect(checkWin(board, 4, 7, 1)).toBe(true)
   })
 
-  it('forces renju for 3kyu and above', () => {
-    expect(mustUseRenju('3급')).toBe(true)
-    expect(mustUseRenju('4급')).toBe(false)
-    expect(mustUseRenju('1단')).toBe(true)
-    expect(resolveRule('freestyle', '5급', '2급')).toBe('renju')
+  it('keeps the selected rule regardless of rank', () => {
+    expect(resolveRule('freestyle', '3급', '3급')).toBe('freestyle')
+    expect(resolveRule('renju', '15급', '15급')).toBe('renju')
+  })
+
+  it('labels rules for display', () => {
+    expect(ruleLabel('freestyle')).toBe('일반')
+    expect(ruleLabel('renju')).toBe('렌주')
   })
 
   it('applies moves in freestyle', () => {
@@ -71,10 +74,11 @@ describe('renju', () => {
     }
   })
 
-  it('forbids overline (6+ in a row)', () => {
+  it('forbids overline (6+ in a row) under renju only', () => {
     let board = createEmptyBoard()
     for (let x = 0; x < 5; x++) board = placeStone(board, x, 7, 1)
     expect(isRenjuForbidden(board, 5, 7, 15)).toBe(true)
+    expect(isStandardForbidden(board, 5, 7, 15)).toBe(false)
   })
 
   it('allows a single open three', () => {

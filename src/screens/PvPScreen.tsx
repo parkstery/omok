@@ -5,7 +5,7 @@ import { RuleToggle } from '../components/RankPicker'
 import { Button } from '../components/ui/Button'
 import { StatusBadge } from '../components/ui/StatusBadge'
 import { TopBar } from '../components/ui/TopBar'
-import { mustUseRenju, resolveRule } from '../core/game'
+import { resolveRule } from '../core/game'
 import {
   abandonRoom,
   createRoom,
@@ -43,7 +43,8 @@ export function PvPScreen() {
   const setRoomCode = useGameStore((s) => s.setRoomCode)
   const enterOnlineGame = useGameStore((s) => s.enterOnlineGame)
   const profile = useUserStore((s) => s.profile)
-  const [rule, setRule] = useState<'freestyle' | 'renju'>('freestyle')
+  const setPendingRule = useGameStore((s) => s.setPendingRule)
+  const rule = useGameStore((s) => s.pendingRule)
   const [help, setHelp] = useState(false)
   const [phase, setPhase] = useState<LobbyPhase>('setup')
   const [busy, setBusy] = useState(false)
@@ -71,7 +72,7 @@ export function PvPScreen() {
     }
   }, [phase, roomCode, enterOnlineGame])
 
-  const resolvedRule = resolveRule(rule, profile?.rank ?? '15급', profile?.rank ?? '15급')
+  const resolvedRule = resolveRule(rule)
 
   const handleCreate = async () => {
     if (!profile) return
@@ -158,10 +159,10 @@ export function PvPScreen() {
           <>
             <div className="field">
               <label>규칙</label>
-              <RuleToggle value={rule} onChange={setRule} rank={profile?.rank ?? '15급'} />
-              {mustUseRenju(profile?.rank ?? '15급') && (
-                <p className="hint">3급 이상은 렌주룰만 적용됩니다.</p>
-              )}
+              <RuleToggle value={rule} onChange={setPendingRule} />
+              <p className="hint">
+                {rule === 'renju' ? '렌주: 흑 3-3·4-4·장목 금수' : '일반: 흑 3-3(삼삼) 금수'}
+              </p>
             </div>
             <Button variant="secondary" fullWidth disabled={busy} onClick={handleCreate}>
               방 만들기

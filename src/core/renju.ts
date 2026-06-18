@@ -171,6 +171,39 @@ export function isRenjuForbidden(
   return threes >= 2 || fours >= 2
 }
 
+/** 일반룰(삼삼금지): 흑의 活三 2개 이상만 금수 */
+export function isStandardForbidden(
+  board: Stone[][],
+  x: number,
+  y: number,
+  size: number,
+): boolean {
+  if (getStone(board, x, y, size) !== 0) return true
+
+  const simulated = placeStone(board, x, y, 1)
+  if (checkWin(simulated, x, y, 1, size)) return false
+
+  return countOpenThrees(simulated, x, y, 1, size) >= 2
+}
+
+export function getStandardForbiddenPoints(board: Stone[][], size: number): { x: number; y: number }[] {
+  const points: { x: number; y: number }[] = []
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if (getStone(board, x, y, size) === 0 && isStandardForbidden(board, x, y, size)) {
+        points.push({ x, y })
+      }
+    }
+  }
+  return points
+}
+
+export function isValidStandardMove(board: Stone[][], x: number, y: number, color: Color, size: number): boolean {
+  if (getStone(board, x, y, size) !== 0) return false
+  if (color === 2) return true
+  return !isStandardForbidden(board, x, y, size)
+}
+
 export function getRenjuForbiddenPoints(board: Stone[][], size: number): { x: number; y: number }[] {
   const points: { x: number; y: number }[] = []
   for (let y = 0; y < size; y++) {

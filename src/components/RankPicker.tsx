@@ -1,5 +1,5 @@
-import { mustUseRenju } from '../core/game'
 import { RANKS } from '../engine/ranks'
+import type { Rule } from '../core/types'
 import './RankPicker.css'
 
 interface RankPickerProps {
@@ -27,20 +27,17 @@ export function RankPicker({ value, onChange }: RankPickerProps) {
 export function RuleToggle({
   value,
   onChange,
-  rank,
 }: {
-  value: 'freestyle' | 'renju'
-  onChange: (v: 'freestyle' | 'renju') => void
-  rank: string
+  value: Rule
+  onChange: (v: Rule) => void
 }) {
-  const locked = mustUseRenju(rank)
   return (
     <div className="rule-toggle">
       <button
         type="button"
         className={value === 'freestyle' ? 'active' : ''}
-        disabled={locked}
         onClick={() => onChange('freestyle')}
+        title="흑 3-3(삼삼) 금수"
       >
         일반
       </button>
@@ -48,6 +45,7 @@ export function RuleToggle({
         type="button"
         className={value === 'renju' ? 'active' : ''}
         onClick={() => onChange('renju')}
+        title="흑 3-3·4-4·장목 금수"
       >
         렌주
       </button>

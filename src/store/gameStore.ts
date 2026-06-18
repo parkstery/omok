@@ -327,15 +327,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   setPendingOpponentType: (type) => set({ pendingOpponentType: type }),
-  setPendingRank: (rank) => {
-    const isDan = rank.endsWith('단')
-    const kyu = parseInt(rank.replace('급', ''), 10)
-    const forceRenju = isDan || (!Number.isNaN(kyu) && kyu <= 3)
-    set({
-      pendingRank: rank,
-      pendingRule: forceRenju ? 'renju' : get().pendingRule,
-    })
-  },
+  setPendingRank: (rank) => set({ pendingRank: rank }),
   setPendingRule: (rule) => set({ pendingRule: rule }),
   setPendingColor: (color) => set({ pendingColor: color }),
 

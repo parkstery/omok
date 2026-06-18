@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react'
 import { BannerAd } from '../components/BannerAd'
 import { RuleToggle } from '../components/RankPicker'
-import { mustUseRenju } from '../core/game'
 import type { Rule } from '../core/types'
 import { DEFAULT_RANK, winsRequiredForPromotion } from '../core/rank'
 import { useGameStore } from '../store/gameStore'
@@ -11,28 +9,20 @@ export function HomeScreen() {
   const setScreen = useGameStore((s) => s.setScreen)
   const startQuickComputer = useGameStore((s) => s.startQuickComputer)
   const setPendingRule = useGameStore((s) => s.setPendingRule)
-  const pendingRule = useGameStore((s) => s.pendingRule)
+  const matchRule = useGameStore((s) => s.pendingRule)
   const initLocalPvp = useGameStore((s) => s.initLocalPvp)
   const profile = useUserStore((s) => s.profile)
   const winsAtRank = useUserStore((s) => s.profile?.winsAtRank ?? 0)
   const rank = profile?.rank ?? DEFAULT_RANK
   const winsRequired = winsRequiredForPromotion(rank)
-  const renjuLocked = mustUseRenju(rank)
-  const [computerRule, setComputerRule] = useState<Rule>(pendingRule)
-
-  useEffect(() => {
-    if (renjuLocked) {
-      setComputerRule('renju')
-      setPendingRule('renju')
-    }
-  }, [renjuLocked, setPendingRule])
 
   const handleRuleChange = (rule: Rule) => {
-    setComputerRule(rule)
     setPendingRule(rule)
   }
 
   if (!profile) return null
+
+  const ruleName = matchRule === 'renju' ? '렌주' : '일반(삼삼금지)'
 
   return (
     <div className="flex h-dvh flex-col bg-[#fff8e1]">
@@ -55,18 +45,21 @@ export function HomeScreen() {
 
       <main className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-3">
         <section className="rounded-lg border border-stone-300/70 bg-white/50 p-3">
-          <p className="mb-2 text-xs font-medium text-stone-600">빠른 대국</p>
           <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="text-xs text-stone-600">
-              규칙{renjuLocked ? ' (렌주 고정)' : ''}
-            </span>
-            <RuleToggle value={computerRule} onChange={handleRuleChange} rank={rank} />
+            <span className="text-xs text-stone-600">대국 규칙</span>
+            <RuleToggle value={matchRule} onChange={handleRuleChange} />
           </div>
+          <p className="mb-2 text-[11px] text-stone-500">
+            {matchRule === 'renju'
+              ? '렌주: 흑 3-3·4-4·장목 금수'
+              : '일반: 흑 3-3(삼삼) 금수만 적용'}
+          </p>
+          <p className="mb-2 text-xs font-medium text-stone-600">빠른 대국</p>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               className="rounded-md bg-[#5d4037] px-2 py-2 text-xs font-medium text-white hover:bg-[#4e342e]"
-              onClick={() => startQuickComputer('engine', 'random', computerRule)}
+              onClick={() => startQuickComputer('engine', 'random', matchRule)}
             >
               컴퓨터
             </button>
@@ -80,14 +73,14 @@ export function HomeScreen() {
             <button
               type="button"
               className="rounded-md border border-stone-400 bg-white px-2 py-2 text-xs font-medium text-stone-800 hover:bg-stone-50"
-              onClick={() => initLocalPvp('freestyle', profile.rank, profile.rank)}
+              onClick={() => initLocalPvp(matchRule, profile.rank, profile.rank)}
             >
               2인
             </button>
           </div>
           <p className="mt-2 text-[11px] leading-relaxed text-stone-500">
-            컴퓨터 대국은 현재 급·단({profile.rank}) AI와 {computerRule === 'renju' ? '렌주' : '일반'}룰로
-            대결합니다. 같은 급·단에서 {winsRequired}승 시 승급합니다.
+            선택한 {ruleName}룰로 컴퓨터·온라인·2인 대국이 진행됩니다. 컴퓨터 승급전은 {profile.rank} AI와
+            같은 급·단 {winsRequired}승 시 승급합니다.
           </p>
         </section>
 
@@ -116,21 +109,21 @@ export function HomeScreen() {
             <button
               type="button"
               className="rounded border border-stone-300 px-2 py-1 hover:bg-stone-100"
-              onClick={() => startQuickComputer('ai', 'random', computerRule)}
+              onClick={() => startQuickComputer('ai', 'random', matchRule)}
             >
               AI · 랜덤
             </button>
             <button
               type="button"
               className="rounded border border-stone-300 px-2 py-1 hover:bg-stone-100"
-              onClick={() => startQuickComputer('engine', 1, computerRule)}
+              onClick={() => startQuickComputer('engine', 1, matchRule)}
             >
               엔진 · 흑
             </button>
             <button
               type="button"
               className="rounded border border-stone-300 px-2 py-1 hover:bg-stone-100"
-              onClick={() => startQuickComputer('engine', 2, computerRule)}
+              onClick={() => startQuickComputer('engine', 2, matchRule)}
             >
               엔진 · 백
             </button>

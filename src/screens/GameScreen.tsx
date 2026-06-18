@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { BannerAd } from '../components/BannerAd'
 import { Board } from '../components/Board'
 import { HelpModal } from '../components/HelpModal'
-import { RenjuHelpContent } from '../components/RenjuHelpContent'
+import { RenjuHelpContent, StandardHelpContent } from '../components/RenjuHelpContent'
+import { blackHasForbiddenMarks, ruleLabel as getRuleLabel } from '../core/game'
 import { getWinningLine } from '../core/board'
 import { useGameStore } from '../store/gameStore'
 import { useUserStore } from '../store/userStore'
@@ -22,7 +23,7 @@ export function GameScreen() {
   const profile = useUserStore((s) => s.profile)
   const [help, setHelp] = useState(false)
 
-  const ruleLabel = config.rule === 'renju' ? '렌주' : '일반'
+  const ruleLabelText = getRuleLabel(config.rule)
   const isMyTurn = config.isLocal || state.turn === humanColor
   const turnLabel = state.turn === 1 ? '흑' : '백'
   const statusLabel =
@@ -97,14 +98,14 @@ export function GameScreen() {
         <div className="mt-1 flex flex-wrap items-center gap-1 text-[11px] text-stone-600">
           {!config.isLocal && <span className="rounded bg-stone-200/80 px-1.5 py-0.5">온라인</span>}
           <span className="rounded bg-stone-200/80 px-1.5 py-0.5">{state.moves.length}수</span>
-          <span className="rounded bg-amber-100 px-1.5 py-0.5 text-amber-900">{ruleLabel}</span>
+          <span className="rounded bg-amber-100 px-1.5 py-0.5 text-amber-900">{ruleLabelText}</span>
           <span className="rounded bg-stone-200/80 px-1.5 py-0.5">{statusLabel}</span>
-          {config.rule === 'renju' && (
+          {blackHasForbiddenMarks(config.rule) && (
             <button
               type="button"
               className="rounded px-1.5 py-0.5 hover:bg-stone-200/70"
               onClick={() => setHelp(true)}
-              aria-label="렌주 도움말"
+              aria-label="규칙 도움말"
             >
               ?
             </button>
@@ -147,7 +148,7 @@ export function GameScreen() {
           )}
           <p className="text-sm font-bold text-stone-800">{resultText}</p>
           <p className="text-[11px] text-stone-500">
-            {state.moves.length}수 · {ruleLabel}
+            {state.moves.length}수 · {ruleLabelText}
             {profile && config.opponentType !== 'human' && (
               <> · {profile.rank} ({profile.winsAtRank ?? 0}승)</>
             )}
@@ -175,8 +176,8 @@ export function GameScreen() {
       )}
 
       {help && (
-        <HelpModal title="렌주 금수" onClose={() => setHelp(false)}>
-          <RenjuHelpContent />
+        <HelpModal title={config.rule === 'renju' ? '렌주 금수' : '일반룰 (삼삼금지)'} onClose={() => setHelp(false)}>
+          {config.rule === 'renju' ? <RenjuHelpContent /> : <StandardHelpContent />}
         </HelpModal>
       )}
     </div>
