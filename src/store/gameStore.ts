@@ -65,7 +65,7 @@ interface GameStore {
   replayToEnd: () => void
   finishAndSave: () => Promise<PromotionResult | null>
   undoMove: () => void
-  startQuickComputer: (type?: 'engine' | 'ai', color?: Color | 'random') => void
+  startQuickComputer: (type?: 'engine' | 'ai', color?: Color | 'random', rule?: Rule) => void
   lastPromotion: PromotionResult | null
   dismissResult: () => void
 }
@@ -196,11 +196,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 
-  startQuickComputer: (type = 'engine', color = 'random') => {
+  startQuickComputer: (type = 'engine', color = 'random', rule) => {
     const profile = useUserStore.getState().profile
     const rank = profile?.rank ?? '15급'
-    const rule = resolveRule('freestyle', rank, rank)
-    get().initComputer(type, rank, rule, color)
+    const selectedRule = rule ?? get().pendingRule
+    get().initComputer(type, rank, selectedRule, color)
   },
 
   undoMove: () => {
