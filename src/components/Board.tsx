@@ -28,12 +28,17 @@ export function Board({
   const winSet = new Set(winLine.map((p) => `${p.x},${p.y}`))
   const boardScale = useSettingsStore((s) => s.settings.boardScale)
   const padding = compact ? 8 : 12
-  const heightOffset = boardScale === 'large' ? 160 : 220
-  const maxBoard = compact ? 'min(280px, 92%)' : `min(100%, calc(100dvh - ${heightOffset}px))`
-  const cellSize = `calc((${maxBoard} - ${padding * 2}px) / ${size - 1})`
+
+  const wrapClass = [
+    'board-wrap',
+    compact ? 'board-wrap--compact' : '',
+    !compact && boardScale === 'large' ? 'board-wrap--large' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <div className={`board-wrap${compact ? ' board-wrap--compact' : ''}`}>
+    <div className={wrapClass}>
       <div
         className="board"
         style={{
@@ -82,7 +87,6 @@ export function Board({
               ]
                 .filter(Boolean)
                 .join(' ')}
-              style={{ width: cellSize, height: cellSize }}
               onClick={() => interactive && onCellClick?.(x, y)}
               disabled={!interactive || stone !== 0}
               aria-label={`${x + 1},${y + 1}`}
