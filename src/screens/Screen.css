@@ -244,6 +244,8 @@
 
 .result-main {
   text-align: center;
+  justify-content: flex-start;
+  padding-bottom: 24px;
 }
 
 .result-title {

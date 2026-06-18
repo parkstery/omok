@@ -57,7 +57,9 @@ export function ReplayScreen() {
           </span>
         )}
       </div>
-      <Board board={state.board} size={config.boardSize} lastMove={state.lastMove} interactive={false} />
+      <div className="board-area">
+        <Board board={state.board} size={config.boardSize} lastMove={state.lastMove} interactive={false} />
+      </div>
       <div className="replay-panel">
         <input
           className="replay-slider"

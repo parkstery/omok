@@ -36,7 +36,7 @@ export function ResultScreen() {
   return (
     <div className="screen">
       <BannerAd />
-      <main className="screen-main result-main">
+      <main className="screen-main result-main scroll-main">
         {personalResult && (
           <p className={`result-personal ${personalResult === '승리!' ? 'win' : personalResult === '패배' ? 'loss' : ''}`}>
             {personalResult}
