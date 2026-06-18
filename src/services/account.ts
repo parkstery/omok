@@ -13,6 +13,12 @@ export async function ensureUserProfile(): Promise<UserProfile> {
     if (!profile.stats) {
       profile.stats = { wins: 0, losses: 0, draws: 0 }
     }
+    if (profile.winsAtRank === undefined) {
+      profile.winsAtRank = 0
+    }
+    if (!profile.rank) {
+      profile.rank = '15급'
+    }
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile))
     return profile
   }

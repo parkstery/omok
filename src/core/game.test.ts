@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { checkWin, createEmptyBoard, getWinningLine, placeStone } from '../core/board'
-import { applyMove, createInitialState, mustUseRenju, resolveRule } from '../core/game'
+import { applyMove, createInitialState, mustUseRenju, resolveRule, undoMoves } from '../core/game'
 import { isRenjuForbidden, isValidRenjuMove } from '../core/renju'
 
 describe('board', () => {
@@ -84,5 +84,15 @@ describe('renju', () => {
     board = placeStone(board, 8, 7, 1)
     expect(isRenjuForbidden(board, 5, 7, 15)).toBe(false)
     expect(isRenjuForbidden(board, 9, 7, 15)).toBe(false)
+  })
+
+  it('undoes the last moves', () => {
+    let state = createInitialState()
+    state = applyMove(state, 7, 7, 1, 'freestyle')
+    state = applyMove(state, 7, 8, 2, 'freestyle')
+    expect(state.moves).toHaveLength(2)
+    const undone = undoMoves(state, 2, 'freestyle')
+    expect(undone.moves).toHaveLength(0)
+    expect(undone.board[7][7]).toBe(0)
   })
 })

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { BannerAd } from '../components/BannerAd'
 import { HelpModal } from '../components/HelpModal'
-import { RankPicker } from '../components/RankPicker'
 import { Button } from '../components/ui/Button'
 import { Toggle } from '../components/ui/Toggle'
 import { TopBar } from '../components/ui/TopBar'
@@ -53,7 +52,7 @@ export function SettingsScreen() {
   const setScreen = useGameStore((s) => s.setScreen)
   const profile = useUserStore((s) => s.profile)
   const setNickname = useUserStore((s) => s.setNickname)
-  const setRank = useUserStore((s) => s.setRank)
+  const { winsAtRank, winsRequired } = useUserStore((s) => s.getPromotionProgress())
   const settings = useSettingsStore((s) => s.settings)
   const setSoundEnabled = useSettingsStore((s) => s.setSoundEnabled)
   const setHapticEnabled = useSettingsStore((s) => s.setHapticEnabled)
@@ -73,9 +72,11 @@ export function SettingsScreen() {
             onChange={(e) => setNickname(e.target.value)}
           />
         </div>
-        <div className="field field--wide picker-panel">
-          <label>급·단</label>
-          <RankPicker value={profile?.rank ?? '15급'} onChange={setRank} />
+        <div className="field">
+          <label>급·단 (승급전)</label>
+          <p className="result-mini">
+            {profile?.rank ?? '15급'} · 승급 진행 {winsAtRank}/{winsRequired}
+          </p>
         </div>
         <div className="field">
           <label>게임 ID</label>

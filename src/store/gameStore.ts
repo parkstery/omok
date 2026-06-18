@@ -6,7 +6,10 @@ import {
   getForbiddenPreview,
   pickPlayerColor,
   resolveRule,
+  undoMoves,
 } from '../core/game'
+import { isSameRankMatch } from '../core/rank'
+import type { PromotionResult } from '../core/rank'
 import type { Color, GameConfig, GameRecord, GameState, Move, Rule, Screen } from '../core/types'
 import { findEngineMoveAsync } from '../engine/computer'
 import { playMoveFeedback, playWinFeedback } from '../services/feedback'
@@ -60,7 +63,11 @@ interface GameStore {
   setReplayIndex: (index: number) => void
   replayToStart: () => void
   replayToEnd: () => void
-  finishAndSave: () => Promise<void>
+  finishAndSave: () => Promise<PromotionResult | null>
+  undoMove: () => void
+  startQuickComputer: (type?: 'engine' | 'ai', color?: Color | 'random') => void
+  lastPromotion: PromotionResult | null
+  dismissResult: () => void
 }
 
 function opponentColor(color: Color): Color {
@@ -82,6 +89,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   pendingRule: 'freestyle',
   pendingColor: 1,
   thinking: false,
+  lastPromotion: null as PromotionResult | null,
 
   setScreen: (screen) => set({ screen }),
 
@@ -161,7 +169,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   initComputer: (type, rank, rule, color) => {
-    const resolved = resolveRule(rule, rank, rank)
+    const profileRank = useUserStore.getState().profile?.rank ?? rank
+    const matchRank = profileRank
+    const resolved = resolveRule(rule, matchRank, matchRank)
     const humanColor = pickPlayerColor(color)
     const aiColor = opponentColor(humanColor)
     const state = createInitialState()
@@ -171,8 +181,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         rule: resolved,
         opponentType: type,
         isLocal: true,
-        blackRank: rank,
-        whiteRank: rank,
+        blackRank: matchRank,
+        whiteRank: matchRank,
         blackPlayer: humanColor === 1 ? '나' : type === 'engine' ? '엔진' : 'AI',
         whitePlayer: humanColor === 2 ? '나' : type === 'engine' ? '엔진' : 'AI',
         playerColor: humanColor,
@@ -184,6 +194,34 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (aiColor === 1) {
       setTimeout(() => get().runComputerTurn(), 400)
     }
+  },
+
+  startQuickComputer: (type = 'engine', color = 'random') => {
+    const profile = useUserStore.getState().profile
+    const rank = profile?.rank ?? '15급'
+    const rule = resolveRule('freestyle', rank, rank)
+    get().initComputer(type, rank, rule, color)
+  },
+
+  undoMove: () => {
+    const { config, state, humanColor, thinking } = get()
+    if (thinking || state.result || !config.isLocal || config.isSpectate) return
+    if (state.moves.length === 0) return
+
+    let count = 1
+    if (config.opponentType !== 'human') {
+      const aiColor = opponentColor(humanColor)
+      const last = state.moves[state.moves.length - 1]
+      count = last.color === aiColor ? 2 : 1
+      if (state.moves.length < count) return
+    }
+
+    const next = undoMoves(state, count, config.rule, config.boardSize)
+    set({ state: next, lastPromotion: null })
+  },
+
+  dismissResult: () => {
+    set({ lastPromotion: null })
   },
 
   makeMove: (x, y) => {
@@ -266,6 +304,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({
       state: { ...state, forbidden: getForbiddenPreview(state, config.rule) },
       screen: 'game',
+      lastPromotion: null,
     })
     if (config.opponentType !== 'human' && humanColor === 2) {
       setTimeout(() => get().runComputerTurn(), 400)
@@ -283,6 +322,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       state: createInitialState(),
       config: defaultConfig(),
       roomCode: '',
+      lastPromotion: null,
     })
   },
 
@@ -345,7 +385,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   finishAndSave: async () => {
     const { config, state, humanColor, screen } = get()
-    if (!state.result || screen === 'result') return
+    if (!state.result || screen !== 'game') return null
+
+    let promotion: PromotionResult | null = null
+    const profileRank = useUserStore.getState().profile?.rank ?? '15급'
+    const opponentRank = humanColor === 1 ? config.whiteRank : config.blackRank
 
     if (config.opponentType !== 'human' && config.isLocal) {
       if (state.result === 'draw') {
@@ -354,8 +398,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const won =
           (state.result === 'black_win' && humanColor === 1) ||
           (state.result === 'white_win' && humanColor === 2)
-        useUserStore.getState().recordGameResult(won ? 'win' : 'loss')
-        if (won) playWinFeedback()
+        if (won && isSameRankMatch(profileRank, opponentRank)) {
+          promotion = useUserStore.getState().recordRankedComputerResult(opponentRank, true)
+          playWinFeedback()
+        } else if (won) {
+          useUserStore.getState().recordGameResult('win')
+          playWinFeedback()
+        } else if (isSameRankMatch(profileRank, opponentRank)) {
+          useUserStore.getState().recordRankedComputerResult(opponentRank, false)
+        } else {
+          useUserStore.getState().recordGameResult('loss')
+        }
       }
     } else if (!config.isLocal) {
       if (state.result === 'draw') {
@@ -371,6 +424,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     await showInterstitialAd()
     await saveGameRecord(config, state)
-    set({ screen: 'result' })
+    set({ lastPromotion: promotion })
+    return promotion
   },
 }))

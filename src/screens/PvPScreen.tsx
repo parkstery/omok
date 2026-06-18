@@ -146,7 +146,7 @@ export function PvPScreen() {
       <BannerAd />
       <TopBar
         title="사람 대전"
-        onBack={() => (phase === 'waiting' ? leaveWaiting() : setScreen('mode'))}
+        onBack={() => (phase === 'waiting' ? leaveWaiting() : setScreen('home'))}
         onHelp={() => setHelp(true)}
       />
       <main className="screen-main compact">

@@ -83,6 +83,28 @@ export function applyMove(
   }
 }
 
+export function rebuildStateFromMoves(
+  moves: Move[],
+  rule: Rule,
+  size = BOARD_SIZE,
+): GameState {
+  let state = createInitialState(size)
+  for (const m of moves) {
+    state = applyMove(state, m.x, m.y, m.color, rule, size)
+  }
+  return state
+}
+
+export function undoMoves(
+  state: GameState,
+  count: number,
+  rule: Rule,
+  size = BOARD_SIZE,
+): GameState {
+  if (count <= 0 || state.moves.length < count || state.result) return state
+  return rebuildStateFromMoves(state.moves.slice(0, -count), rule, size)
+}
+
 export function getForbiddenPreview(
   state: GameState,
   rule: Rule,

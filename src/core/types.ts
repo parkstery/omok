@@ -8,14 +8,9 @@ export type OpponentType = 'human' | 'engine' | 'ai'
 export type Screen =
   | 'splash'
   | 'home'
-  | 'mode'
   | 'pvp'
-  | 'computer-type'
-  | 'computer-rank'
-  | 'computer-rule'
   | 'game'
   | 'spectate'
-  | 'result'
   | 'records'
   | 'replay'
   | 'settings'
@@ -73,4 +68,6 @@ export interface UserProfile {
   createdAt: number
   onboardingComplete?: boolean
   stats: { wins: number; losses: number; draws: number }
+  /** 같은 급·단 AI 대국 연속 승리 수 (승급 판정용) */
+  winsAtRank?: number
 }
