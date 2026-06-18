@@ -3,10 +3,12 @@ import { BannerAd } from '../components/BannerAd'
 import { HelpModal } from '../components/HelpModal'
 import { RankPicker } from '../components/RankPicker'
 import { Button } from '../components/ui/Button'
+import { Toggle } from '../components/ui/Toggle'
 import { TopBar } from '../components/ui/TopBar'
 import { getPlayAccountBindingNote } from '../services/account'
 import { getOnlineStatus } from '../services/network'
 import { useGameStore } from '../store/gameStore'
+import { useSettingsStore } from '../store/settingsStore'
 import { useUserStore } from '../store/userStore'
 import './Screen.css'
 
@@ -52,13 +54,17 @@ export function SettingsScreen() {
   const profile = useUserStore((s) => s.profile)
   const setNickname = useUserStore((s) => s.setNickname)
   const setRank = useUserStore((s) => s.setRank)
+  const settings = useSettingsStore((s) => s.settings)
+  const setSoundEnabled = useSettingsStore((s) => s.setSoundEnabled)
+  const setHapticEnabled = useSettingsStore((s) => s.setHapticEnabled)
+  const setBoardScale = useSettingsStore((s) => s.setBoardScale)
   const [help, setHelp] = useState(false)
 
   return (
     <div className="screen">
       <BannerAd />
       <TopBar title="설정" onBack={() => setScreen('home')} onHelp={() => setHelp(true)} />
-      <main className="screen-main compact">
+      <main className="screen-main compact settings-main">
         <div className="field">
           <label>닉네임</label>
           <input
@@ -75,6 +81,40 @@ export function SettingsScreen() {
           <label>게임 ID</label>
           <code className="game-id">{profile?.gameId ?? '-'}</code>
         </div>
+
+        <h3 className="settings-section-title">게임</h3>
+        <Toggle
+          label="효과음"
+          description="착수·승리 시 짧은 소리"
+          checked={settings.soundEnabled}
+          onChange={setSoundEnabled}
+        />
+        <Toggle
+          label="진동"
+          description="착수·승리 시 햅틱 피드백"
+          checked={settings.hapticEnabled}
+          onChange={setHapticEnabled}
+        />
+        <div className="field">
+          <label>보드 크기</label>
+          <div className="setting-segment">
+            <button
+              type="button"
+              className={settings.boardScale === 'auto' ? 'active' : ''}
+              onClick={() => setBoardScale('auto')}
+            >
+              자동
+            </button>
+            <button
+              type="button"
+              className={settings.boardScale === 'large' ? 'active' : ''}
+              onClick={() => setBoardScale('large')}
+            >
+              크게
+            </button>
+          </div>
+        </div>
+
         <Button variant="secondary" fullWidth onClick={() => setScreen('license')}>
           오픈소스 라이선스
         </Button>

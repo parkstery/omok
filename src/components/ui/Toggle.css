@@ -1,0 +1,93 @@
+.ui-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 300px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  cursor: pointer;
+}
+
+.ui-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ui-toggle__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ui-toggle__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ui-toggle__desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.ui-toggle__track {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.ui-toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.ui-toggle input:checked + .ui-toggle__track {
+  background: var(--accent);
+}
+
+.ui-toggle input:checked + .ui-toggle__track::after {
+  transform: translateX(18px);
+}
+
+.setting-segment {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.setting-segment button {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.setting-segment button.active {
+  border-color: var(--accent-dark);
+  background: #fff3e0;
+  color: var(--accent-dark);
+  font-weight: 600;
+}

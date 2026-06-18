@@ -16,6 +16,24 @@ body,
   user-select: none;
 }
 
+@media (min-width: 520px) {
+  body {
+    background: #efebe9;
+  }
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  height: 100dvh;
+  margin: 0 auto;
+  background: var(--bg-cream);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  position: relative;
+}
+
 button {
   font-family: inherit;
 }

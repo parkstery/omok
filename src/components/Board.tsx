@@ -1,5 +1,6 @@
 import { BOARD_SIZE } from '../core/types'
 import type { Stone } from '../core/types'
+import { useSettingsStore } from '../store/settingsStore'
 import './Board.css'
 
 interface BoardProps {
@@ -25,8 +26,10 @@ export function Board({
 }: BoardProps) {
   const forbiddenSet = new Set(forbidden.map((p) => `${p.x},${p.y}`))
   const winSet = new Set(winLine.map((p) => `${p.x},${p.y}`))
+  const boardScale = useSettingsStore((s) => s.settings.boardScale)
   const padding = compact ? 8 : 12
-  const maxBoard = compact ? 'min(280px, 72vw)' : 'min(100vw - 24px, 100vh - 220px)'
+  const heightOffset = boardScale === 'large' ? 160 : 220
+  const maxBoard = compact ? 'min(280px, 72vw)' : `min(100vw - 24px, 100vh - ${heightOffset}px)`
   const cellSize = `calc((${maxBoard} - ${padding * 2}px) / ${size - 1})`
 
   return (

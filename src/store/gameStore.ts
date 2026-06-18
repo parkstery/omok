@@ -47,6 +47,7 @@ interface GameStore {
   setSpectateCode: (code: string) => void
   loadReplay: (record: GameRecord) => void
   replayStep: (delta: number) => void
+  setReplayIndex: (index: number) => void
   replayToStart: () => void
   replayToEnd: () => void
   finishAndSave: () => Promise<void>
@@ -231,8 +232,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   replayStep: (delta) => {
-    const { replayMoves, replayIndex, config } = get()
-    const nextIndex = Math.max(0, Math.min(replayMoves.length, replayIndex + delta))
+    const { replayIndex } = get()
+    get().setReplayIndex(replayIndex + delta)
+  },
+
+  setReplayIndex: (index) => {
+    const { replayMoves, config } = get()
+    const nextIndex = Math.max(0, Math.min(replayMoves.length, index))
     let state = createInitialState(config.boardSize)
     for (let i = 0; i < nextIndex; i++) {
       const m = replayMoves[i]
@@ -242,16 +248,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   replayToStart: () => {
-    set({ replayIndex: 0, state: createInitialState(get().config.boardSize) })
+    get().setReplayIndex(0)
   },
 
   replayToEnd: () => {
-    const { replayMoves, config } = get()
-    let state = createInitialState(config.boardSize)
-    for (const m of replayMoves) {
-      state = applyMove(state, m.x, m.y, m.color, config.rule, config.boardSize)
-    }
-    set({ replayIndex: replayMoves.length, state })
+    get().setReplayIndex(get().replayMoves.length)
   },
 
   finishAndSave: async () => {

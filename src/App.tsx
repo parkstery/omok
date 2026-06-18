@@ -78,3 +78,11 @@ export function AppRouter() {
       return <HomeScreen />
   }
 }
+
+export function App() {
+  return (
+    <div className="app-shell">
+      <AppRouter />
+    </div>
+  )
+}
